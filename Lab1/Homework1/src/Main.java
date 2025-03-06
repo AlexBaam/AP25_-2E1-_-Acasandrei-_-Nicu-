@@ -232,57 +232,68 @@ public class Main {
         }
     }
 
-    static int[] candidates, viz, rezultat;
-    static int csize = 0, rezultatSize = 0;
+    static int[] candidates, nodeCheck, result;
+    static int cSize;
+    static int resultSize = 0;
 
     private static void bonus(int n, int k, int[][] graph_matrix){
         candidates = new int[n];
-        viz = new int[n];
-        rezultat = new int[k];
+        nodeCheck = new int[n];
+        result = new int[k];
+        cSize = 0;
 
         for (int i = 0; i < n; i++) {
-            int egrad = 0;
-            for (int j = 0; j < n; j++)
-                if (graph_matrix[i][j] == 1)
-                    egrad++;
+            int nodeDegree = 0;
+            for (int j = 0; j < n; j++) {
+                if (graph_matrix[i][j] == 1) {
+                    nodeDegree++;
+                }
+            }
 
-            if (egrad >= k - 1)
-                candidates[csize++] = i;
+            if (nodeDegree >= k - 1) {
+                candidates[cSize++] = i;
+            }
         }
 
-        for (int i = 0; i < csize; i++)
+        for (int i = 0; i < cSize; i++)
         {
-            for (int j = 0; j < n; j++)
-                viz[j] = 0;
-            rezultatSize = 0;
-            bkt(candidates[i], k, graph_matrix);
+            Arrays.fill(nodeCheck, 0);
+            resultSize = 0;
+            if(candidates[i] < n) {
+                bkt(candidates[i], k, graph_matrix);
+            }
         }
     }
 
-    public static void bkt(int idx, int k, int[][]  graph_matrix) {
-        viz[idx] = 1;
-        rezultat[rezultatSize++] = candidates[idx];
+    public static void bkt(int index, int k, int[][]  graph_matrix) {
+        if(resultSize > k) {
+            return;
+        }
+        nodeCheck[index] = 1;
+        result[resultSize++] = candidates[index];
 
-        if (rezultatSize == k) {
+        if (resultSize == k) {
             System.out.println("There is a clique");
             for (int i = 0; i < k; i++)
-                System.out.print(rezultat[i] + " ");
+                System.out.print(result[i] + " ");
             System.out.println();
             return;
         }
 
-        for (int i = idx + 1; i < csize; i++) {
-            if (viz[i] == 0) {
-                boolean ok = true;
-                for (int j = 0; j < rezultatSize; j++)
-                    if (graph_matrix[rezultat[j]][candidates[i]] == 0 || graph_matrix[candidates[i]][rezultat[j]] == 0) {
-                        ok = false;
+        for (int i = index + 1; i < cSize; i++) {
+            if (nodeCheck[candidates[i]] == 0) {
+                boolean isClique = true;
+
+                for (int j = 0; j < resultSize; j++){
+                    if (graph_matrix[result[j]][candidates[i]] == 0 || graph_matrix[candidates[i]][result[j]] == 0) {
+                        isClique = false;
                         break;
                     }
-                if (ok) {
-                    bkt(i, k, graph_matrix);
-                    viz[i] = 0;
-                    rezultatSize--;
+                }
+                if (isClique) {
+                    bkt(candidates[i], k, graph_matrix);
+                    nodeCheck[candidates[index]] = 0;
+                    resultSize--;
                 }
             }
         }
