@@ -10,6 +10,12 @@ public class Main {
      * @param args Command-line arguments (not used).
      */
     public static void main(String[] args) {
+
+        long startTime = System.nanoTime();
+
+        Runtime runtime = Runtime.getRuntime();
+        long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+
         // Creating projects;
         Project P1 = new Project("P1", projectType.PRACTICAL);
         Project P2 = new Project("P2", projectType.THEORETICAL);
@@ -76,6 +82,14 @@ public class Main {
         Solver.printSolution();
 
         Solver.solveHall();
+
+        long endTime = System.nanoTime();
+        System.out.println("Execution time: " + (endTime - startTime) +  " nanoseconds");
+        System.out.println("Execution time: " + (endTime - startTime)/1000000 + " miliseconds");
+
+        long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " + (usedMemoryAfter - usedMemoryBefore) + " bytes");
+        System.out.println("Used memory: " + (usedMemoryAfter - usedMemoryBefore)/1000000 + " megabytes");
     }
 }
 
