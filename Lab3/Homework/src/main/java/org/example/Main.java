@@ -11,10 +11,10 @@ public class Main {
         Freighter F1 = new Freighter("F1", "Cargo", 1, 70, 300);
         Drone D1 = new Drone("D1", "Cargo", 1, 100, 10);
 
-        Flight flight1 = new Flight("One", A1 , LocalTime.of(10, 0), LocalTime.of(10, 30));
-        Flight flight2 = new Flight("Two", A2, LocalTime.of(10, 15), LocalTime.of(10,45));
-        Flight flight3 = new Flight("Three", F1, LocalTime.of(11, 0), LocalTime.of(11,15));
-        Flight flight4 = new Flight("Four", D1, LocalTime.of(11, 0), LocalTime.of(11,15));
+        Flight flight1 = new Flight("N1", A1, LocalTime.of(10, 0), LocalTime.of(10, 30));
+        Flight flight2 = new Flight("N2", A2, LocalTime.of(10, 15), LocalTime.of(10, 45));
+        Flight flight3 = new Flight("N3", F1, LocalTime.of(10, 45), LocalTime.of(11, 0));
+        Flight flight4 = new Flight("N4", D1, LocalTime.of(10, 30), LocalTime.of(11, 0));
 
         Set<Flight> flightSet = new HashSet<Flight>();
         flightSet.add(flight1);
@@ -29,5 +29,11 @@ public class Main {
         Nicu.solver();
 
         Nicu.printSolution();
+
+        FlightGraph graph = new FlightGraph(flightSet);
+
+        graph.printAdjacencyMatrixWithLabels();
+
+        Nicu.bonusSolver();
     }
 }

@@ -1,4 +1,5 @@
 package org.example;
+import javax.print.DocFlavor;
 import  java.util.*;
 
 public class Manager {
@@ -32,7 +33,7 @@ public class Manager {
                 System.out.println("Flight " + flight.getFlightNumber() + " not scheduled!");
             }
         }
-    };
+    }
 
     public void printSolution(){
         System.out.println("Flight Schedule:");
@@ -55,5 +56,25 @@ public class Manager {
                 System.out.println("Flight: " + flight.getFlightNumber() + " could not be scheduled!");
             }
         }
-    };
+    }
+
+    public void bonusSolver(){
+        FlightGraph graph = new FlightGraph(flights);
+        Map<Flight, Integer> assignedRunways = graph.dSaturColoring();
+
+        for(Map.Entry<Flight, Integer> entry : assignedRunways.entrySet()){
+            Flight flight = entry.getKey();
+            int runwayIndex = entry.getValue();
+
+            if(runwayIndex >= airport.getRunaways().size()){
+                System.out.println("\nNot enough runways! Minimum needed: " + (runwayIndex + 1));
+                return;
+            }
+
+            airport.getRunaways().get(runwayIndex).addFlight(flight);
+            flightMap.put(flight, airport.getRunaways().get(runwayIndex));
+        }
+
+        printSolution();
+    }
 }

@@ -41,6 +41,8 @@ public class Location implements Comparable<Location> {
     public int compareTo(Location otherLocation) {
         return name.compareTo(otherLocation.name);
     }
+
+
 }
 
 enum LocationType {
