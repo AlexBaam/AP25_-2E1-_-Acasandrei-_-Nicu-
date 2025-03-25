@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
 
+        LocationGraph graph = new LocationGraph();
+
         Location loc1 = new Location("Alpha_ONE", LocationType.FRIENDLY);
         Location loc2 = new Location("Alpha_TWO", LocationType.NEUTRAL);
         Location loc3 = new Location("Alpha_THREE", LocationType.ENEMY);
@@ -13,36 +15,52 @@ public class Main {
         Location loc5 = new Location("Beta_TWO", LocationType.NEUTRAL);
         Location loc6 = new Location("Beta_THREE", LocationType.ENEMY);
 
-        Location loc7 = new Location("Gamma_ONE", LocationType.FRIENDLY);
-        Location loc8 = new Location("Gamma_TWO", LocationType.NEUTRAL);
-        Location loc9 = new Location("Gamma_THREE", LocationType.ENEMY);
+        // Adding the nodes
+        graph.addLocation(loc1);
+        graph.addLocation(loc2);
+        graph.addLocation(loc3);
+        graph.addLocation(loc4);
+        graph.addLocation(loc5);
+        graph.addLocation(loc6);
+
+        // Adding connections
+        graph.addConnection(loc1,loc2, 3);
+        graph.addConnection(loc2,loc3, 2);
+        graph.addConnection(loc3,loc4, 3);
+        graph.addConnection(loc4,loc5, 2);
+        graph.addConnection(loc5,loc6, 1);
+        graph.addConnection(loc5,loc1, 2);
+        graph.addConnection(loc6,loc4, 2);
+
+        graph.getFastestRoute(loc1);
 
         ArrayList<Location> allLocations = new ArrayList<>();
-
         allLocations.add(loc1);
         allLocations.add(loc2);
         allLocations.add(loc3);
         allLocations.add(loc4);
         allLocations.add(loc5);
         allLocations.add(loc6);
-        allLocations.add(loc7);
-        allLocations.add(loc8);
-        allLocations.add(loc9);
 
-        TreeSet<Location> friendlyLocations =
-                allLocations.stream().filter(loc -> loc.getType()
-                        == LocationType.FRIENDLY).collect(Collectors.toCollection(TreeSet::new));
+        LocationGroup group = new LocationGroup();
+        Map<LocationType, List<Location>> groupedLocations = group.groupLocationByType(allLocations);
+        group.printGroupLocations(groupedLocations);
 
-        System.out.println("Friendly locations: \n");
-        friendlyLocations.forEach(System.out::println);
+        printFastestTimeForLocations(graph, groupedLocations, LocationType.FRIENDLY);
+        printFastestTimeForLocations(graph, groupedLocations, LocationType.NEUTRAL);
+        printFastestTimeForLocations(graph, groupedLocations, LocationType.ENEMY);
+    }
 
-        LinkedList<Location> enemyLocation =
-                allLocations.stream().filter(loc -> loc.getType()
-                        == LocationType.ENEMY).collect(Collectors.toCollection(LinkedList::new));
+    public static void printFastestTimeForLocations(LocationGraph graph,Map<LocationType, List<Location>> groupedLocations, LocationType type) {
+        List<Location> locations = groupedLocations.get(type);
 
-        enemyLocation.sort(Comparator.comparing(Location::getType).thenComparing(Location::getName));
+        System.out.println("\nFastest Time for "+type+" locations: ");
 
-        System.out.println("Enemy locations: \n");
-        enemyLocation.forEach(System.out::println);
+        for(Location location : locations) {
+            if(!locations.get(0).equals(location)) {
+                double fastestTime = graph.getFastestRouteBetween(locations.get(0), location);
+                System.out.println("\nFastest time from " + locations.get(0).getCodeName() + " to " + location.getCodeName() + " is " + fastestTime);
+            }
+        }
     }
 }
