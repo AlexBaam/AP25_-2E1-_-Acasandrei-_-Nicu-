@@ -1,5 +1,6 @@
 package org.example;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LocationGenerator {
     private List<Location> allLocations;
@@ -8,11 +9,14 @@ public class LocationGenerator {
 
     private String[] baseNames = {"Alpha", "Beta", "Gamma", "Delta", "Sigma"};
     private CodeName codeNameGen = new CodeName(baseNames);
+    private Random rand = new Random();
 
-    public LocationGenerator(int locationCounter, int pathCounter) {
+    public LocationGenerator(int locationCounter) {
         allLocations = new ArrayList<>();
         this.locationCounter = locationCounter;
-        this.pathCounter = pathCounter;
+
+        int maxEdgeNr = (locationCounter*(locationCounter-1))/2;
+        this.pathCounter = rand.nextInt((int)maxEdgeNr/4,maxEdgeNr);
     }
 
     public void locationGenerate() {
@@ -44,5 +48,18 @@ public class LocationGenerator {
         for(int i = 0; i < pathCounter; i++) {
            graph.addRandomConnection();
         }
+    }
+
+    public void getFastestPathFromNodeOne(LocationGraph graph) {
+        Location start = allLocations.get(0);
+        graph.getFastestRoute(start);
+    }
+
+    public void printGroupLocations(LocationGroup locationGroup) {
+        locationGroup.printGroupLocations(locationGroup.groupLocationByType(allLocations));
+    }
+
+    public Map<LocationType, List<Location>> locationsGrouping(){
+        return allLocations.stream().collect(Collectors.groupingBy(Location::getType));
     }
 }

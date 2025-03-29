@@ -34,16 +34,16 @@ public class Location implements Comparable<Location> {
     }
 
     @Override
-    public int compareTo(Location otherLocation) {
-        return name.compareTo(otherLocation.name);
-    }
-
-    @Override
     public String toString() {
         return "Location: \n" +
                 "Name: " + name +
                 "\ncodeName: " + codeName +
                 "\nType: " + type;
+    }
+
+    @Override
+    public int compareTo(Location other) {
+        return codeName.compareTo(other.codeName);
     }
 }
 

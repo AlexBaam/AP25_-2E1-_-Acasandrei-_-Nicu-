@@ -14,6 +14,7 @@ public class LocationGroup {
         locations.forEach((locationType, locationList) -> {
             System.out.println(locationType + " Locations:");
             locationList.forEach(location -> System.out.println(location.getCodeName()));
+            System.out.println();
         });
     }
 }
