@@ -21,10 +21,6 @@ public class Location implements Comparable<Location> {
         this.name = faker.name().firstName();
     }
 
-    public String getName() {
-        return name;
-    }
-
     public LocationType getType() {
         return type;
     }

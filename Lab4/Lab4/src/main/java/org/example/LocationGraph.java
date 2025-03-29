@@ -20,7 +20,7 @@ public class LocationGraph {
         graph.addVertex(location);
     }
 
-    public void addConnection(Location location1, Location location2, double weight) {
+    private void addConnection(Location location1, Location location2, double weight) {
         if(location1.equals(location2)) {
             return;
         } else {
@@ -157,6 +157,7 @@ public class LocationGraph {
                         pathsWeights.add(getFastestRouteBetween(start, end));
                     }
                 }
+
             }
         }
 
