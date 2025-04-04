@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>$reportTitle</title>
+</head>
+<body>
+<h1>$reportHeading</h1>
+<table border="1">
+    <tr>
+        <th>Filename</th>
+        <th>Date</th>
+        <th>Tags</th>
+        <th>Path</th>
+    </tr>
+    #foreach ($image in $images)
+        <tr>
+            <td>$image.filename</td>  // td - data cell : e utilizata pt a plasa date in tabel
+            <td>$image.localData</td>
+            <td>$image.tags</td>
+            <td>$image.path</td>
+        </tr>
+    #end
+</table>
+</body>
+</html>
