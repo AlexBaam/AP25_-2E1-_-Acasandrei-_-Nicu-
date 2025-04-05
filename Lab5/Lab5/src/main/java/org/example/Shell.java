@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Shell {
 
-    public Shell(){};
+    public Shell(){}; //Empty default constructor
 
     public void start() throws IOException, InvalidCommandException {
         Scanner sc = new Scanner(System.in);
@@ -43,7 +43,11 @@ public class Shell {
                 }
 
                 case "addAll": {
-                    //TODO
+                    System.out.println("Adding all the images to the repository...");
+
+                    AllAdd everything = new AllAdd(repo);
+                    everything.executeCommand();
+                    break;
                 }
 
                 case "remove": {
@@ -86,8 +90,8 @@ public class Shell {
                     System.out.println("Enter picture name: ");
                     argsDisplay[0] = sc.nextLine();
 
-                    Adder adder = new Adder(argsDisplay, repo);
-                    adder.display(argsDisplay[0]);
+                    Displayer displayer = new Displayer(argsDisplay, repo);
+                    displayer.executeCommand();
                     break;
 
                 }

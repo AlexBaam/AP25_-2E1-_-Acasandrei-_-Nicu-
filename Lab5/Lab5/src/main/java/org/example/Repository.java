@@ -2,7 +2,6 @@ package org.example;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +27,13 @@ public class Repository {
     public void add(Image image) {
         if(images.isEmpty()) {
             this.images.add(image);
+            System.out.println("Image added: " + image.filename() + " with tags: " + image.tags());
         } else {
             for(Image i : images) {
                 if(!i.filename().equals(image.filename())) {
                     if(!i.path().equals(image.path())) {
                         this.images.add(image);
+                        System.out.println("Image added: " + image.filename() + " with tags: " + image.tags());
                         break;
                     }
                 } else {
@@ -46,6 +47,7 @@ public class Repository {
     public void remove(String fileName) {
         for(Image image : images) {
             if(image.filename().equals(fileName)) {
+                System.out.println("Image removed: " + image.filename());
                 images.remove(image);
                 break;
             }
@@ -58,6 +60,7 @@ public class Repository {
             if(image.filename().equals(filename1)) {
                 Image newImage = new Image(filename2, date1, image.tags() , image.path());
                 images.add(newImage);
+                System.out.println("Image updated: " + image.filename() + " to " + newImage.filename());
                 images.remove(image);
             }
         }
@@ -65,7 +68,7 @@ public class Repository {
 
     public void save(String filename) throws IOException, InvalidDataException {
         boolean foundIt = false;
-        String jsonPath = "C:\\Users\\AlexA\\Documents\\JAVA\\Lab5\\src\\main\\java\\org\\example\\bd.json";
+        String jsonPath = "data/bd.json";
         for(Image image : images) {
             if(filename.equals(image.filename())) {
                 foundIt = true;
@@ -80,14 +83,14 @@ public class Repository {
         }
 
         if (!foundIt) {
-            throw new InvalidDataException("Imaginea nu a fost gasita pentru a fi salvata!");
+            throw new InvalidDataException("Image could not be found to be saved!");
         } else {
-            System.out.println("Imaginea a fost salvata in fișierul JSON, dar ștearsa din depozit!");
+            System.out.println("Image saved into the JSON file, but deleted from repository!");
         }
     }
 
     public void load(String fileName) throws IOException {
-        String jsonPath = "C:\\Users\\AlexA\\Documents\\JAVA\\Lab5\\src\\main\\java\\org\\example\\bd.json";
+        String jsonPath = "data/bd.json";
         loadedImages = mapper.readValue(new File(jsonPath), new TypeReference<List<Image>>() {});
         boolean foundIt = false;
 
@@ -111,12 +114,6 @@ public class Repository {
         }
     }
 
-    public void report() throws IOException {
-        String[] argsReport = new String[0]; // sau poți trece null dacă preferi
-        ReportCmd reportCmd = new ReportCmd(argsReport, this);
-        reportCmd.executeCommand();
-    }
-
     public void display(String fileName) throws IOException {
         for (Image image : images) {
             if (image.filename().equals(fileName)) {
@@ -133,5 +130,27 @@ public class Repository {
 
     public List<Image> getImages() {
         return this.images;
+    }
+
+    public List<String> tags(String nume) {
+        for(Image image:images)
+        {
+            if(image.filename().equals(nume)) {
+                return image.tags();
+            }
+        }
+        return null;
+    }
+
+    public List<String> tagsForIImage(int indexImage) {
+        int index = 0;
+        for(Image image:images)
+        {
+            if(index == indexImage) {
+                return image.tags();
+            }
+            index++;
+        }
+        return null;
     }
 }

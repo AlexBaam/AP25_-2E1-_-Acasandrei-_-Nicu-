@@ -20,51 +20,50 @@ public class Formating {
                 + "Text\n");
         format = sc.nextLine();
 
-        switch (format) {
-            case "JSON":
-            {
-                System.out.println("Selected format: JSON\n");
-                System.out.println("Select command: \n" +
-                        "1. save\n" +
-                        "2. load\n");
-                String command2 = null;
-                System.out.println("Enter command: ");
-                command2 = sc.nextLine();
-                switch (command2) {
-                    case "save":
-                    {
-                        System.out.println("Enter picture name: ");
-                        String fileName = sc.nextLine();
+        try {
+            switch (format) {
+                case "JSON": {
+                    System.out.println("Selected format: JSON\n");
+                    System.out.println("Select command: \n" +
+                            "1. save\n" +
+                            "2. load\n");
+                    String command2 = null;
+                    System.out.println("Enter command: ");
+                    command2 = sc.nextLine();
+                    switch (command2) {
+                        case "save": {
+                            System.out.println("Enter picture name: ");
+                            String fileName = sc.nextLine();
 
-                        Saver save = new Saver(fileName, repo);
-                        save.executeCommand();
-                        break;
-                    }
-                    case "load":
-                    {
-                        System.out.println("Enter picture name: ");
-                        String fileName = sc.nextLine();
+                            Saver save = new Saver(fileName, repo);
+                            save.executeCommand();
+                            break;
+                        }
+                        case "load": {
+                            System.out.println("Enter picture name: ");
+                            String fileName = sc.nextLine();
 
-                        Loader load = new Loader(fileName, repo);
-                        load.executeCommand();
-                        break;
+                            Loader load = new Loader(fileName, repo);
+                            load.executeCommand();
+                            break;
+                        }
                     }
+                    break;
                 }
-                break;
+                case "Binary": {
+                    System.out.println("TO DO");
+                    break;
+                }
+                case "Text": {
+                    System.out.println("TO DO");
+                    break;
+                }
+                default: {
+                    throw new InvalidFormatException("Invalid format: " + format);
+                }
             }
-            case "Binary":{
-                System.out.println("TO DO");
-                break;
-            }
-            case "Text":
-            {
-                System.out.println("TO DO");
-                break;
-            }
-            default:
-            {
-                break;
-            }
+        } catch (InvalidFormatException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

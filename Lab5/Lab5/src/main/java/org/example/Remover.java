@@ -8,6 +8,5 @@ public class Remover extends Commands {
 
     public void executeCommand(String fileName){
         repo.remove(fileName);
-        System.out.println("Removed " + fileName);
     }
 }
