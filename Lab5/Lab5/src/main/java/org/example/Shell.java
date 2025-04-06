@@ -1,5 +1,8 @@
 package org.example;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -20,7 +23,8 @@ public class Shell {
                     + "5. format\n"
                     + "6. update\n"
                     + "7. report\n"
-                    + "8. display\n");
+                    + "8. display\n"
+                    + "9. bonus\n");
 
             String command = sc.nextLine();
 
@@ -96,8 +100,16 @@ public class Shell {
 
                 }
 
+                case "bonus": {
+                    MaximalGroups maximalGroups = new MaximalGroups(repo);
+                    Graph<Image, DefaultEdge> graph = maximalGroups.buildGraph();
+                    int maxCliqueSize = maximalGroups.findMaxCliqueSize(graph);
+                    maximalGroups.findAndDisplayCliquesOfSize(graph, maxCliqueSize);
+                    break;
+                }
+
                 default:
-                    throw new InvalidCommandException("Comandă invalidă: " + command);
+                    throw new InvalidCommandException("Invalid command: " + command);
             }
         } catch (InvalidCommandException | InvalidDataException e) {
             System.out.println(e.getMessage());

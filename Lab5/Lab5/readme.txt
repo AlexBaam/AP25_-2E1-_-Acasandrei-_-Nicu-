@@ -43,4 +43,7 @@ si tot asa pana trecem prin tot ce exista in images.
 3. Pentru generarea de tag-uri random nu ne-am complicat, atunci cand o imagine este adaugata manual 
 sau de addAll aceasta va primi cu un Random rand un set de tag-uri dintr-o lista.
 
-4. Inca lucram la acest pas.
+4.O comanda numita "bonus" acceseaza in shell clasa MaximalGroups care parcurge lista de imagini din repository, construieste un graf neorientat folosind JGraphT,
+unde fiecare nod reprezinta o imagine, iar intre doua noduri se adauga o muchie daca cele doua imagini au cel putin un tag comun.
+Dupa cu ajutorul metodei findMaxCliqueSize(graph) se gaseste numarul de k-clica prezent in tot graful si se salveaza in variabila maxCliqueSize.
+Metoda findAndDisplayCliquesOfSize(graph, maxCliqueSize) cauta toate grupurile de imagini care reprezint o maxCliquwSize-clica si le afiseaza

@@ -35,27 +35,75 @@ public class Formating {
                             System.out.println("Enter picture name: ");
                             String fileName = sc.nextLine();
 
-                            Saver save = new Saver(fileName, repo);
-                            save.executeCommand();
+                            Saver jsonSave = new Saver(fileName, repo);
+                            jsonSave.executeCommand();
                             break;
                         }
                         case "load": {
                             System.out.println("Enter picture name: ");
                             String fileName = sc.nextLine();
 
-                            Loader load = new Loader(fileName, repo);
-                            load.executeCommand();
+                            Loader jsonLoad = new Loader(fileName, repo);
+                            jsonLoad.executeCommand();
                             break;
                         }
                     }
                     break;
                 }
                 case "Binary": {
-                    System.out.println("TO DO");
+                    System.out.println("Selected format: JSON\n");
+                    System.out.println("Select command: \n" +
+                            "1. save\n" +
+                            "2. load\n");
+                    String command2 = null;
+                    System.out.println("Enter command: ");
+                    command2 = sc.nextLine();
+                    switch (command2) {
+                        case "save": {
+                            System.out.println("Enter picture name: ");
+                            String fileName = sc.nextLine();
+
+                            Saver binarySave = new Saver(fileName, repo);
+                            binarySave.executeCommand();
+                            break;
+                        }
+                        case "load": {
+                            System.out.println("Enter picture name: ");
+                            String fileName = sc.nextLine();
+
+                            Loader binaryLoad = new Loader(fileName, repo);
+                            binaryLoad.executeCommand();
+                            break;
+                        }
+                    }
                     break;
                 }
                 case "Text": {
-                    System.out.println("TO DO");
+                    System.out.println("Selected format: JSON\n");
+                    System.out.println("Select command: \n" +
+                            "1. save\n" +
+                            "2. load\n");
+                    String command2 = null;
+                    System.out.println("Enter command: ");
+                    command2 = sc.nextLine();
+                    switch (command2) {
+                        case "save": {
+                            System.out.println("Enter picture name: ");
+                            String fileName = sc.nextLine();
+
+                            Saver textSave = new Saver(fileName, repo);
+                            textSave.executeCommand();
+                            break;
+                        }
+                        case "load": {
+                            System.out.println("Enter picture name: ");
+                            String fileName = sc.nextLine();
+
+                            Loader textLoad = new Loader(fileName, repo);
+                            textLoad.executeCommand();
+                            break;
+                        }
+                    }
                     break;
                 }
                 default: {
