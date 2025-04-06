@@ -27,6 +27,7 @@ public class Shell {
                     + "9. bonus\n");
 
             String command = sc.nextLine();
+            command = command.toLowerCase();
 
             try{
             switch (command) {
@@ -46,7 +47,7 @@ public class Shell {
                     break;
                 }
 
-                case "addAll": {
+                case "addall": {
                     System.out.println("Adding all the images to the repository...");
 
                     AllAdd everything = new AllAdd(repo);

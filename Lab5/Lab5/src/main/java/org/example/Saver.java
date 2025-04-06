@@ -2,13 +2,14 @@ package org.example;
 import java.io.IOException;
 
 public class Saver extends Commands {
-
-    public Saver(String fileName, Repository repo) {
+    private String format;
+    public Saver(String fileName, Repository repo, String format) {
         super(fileName, repo);
+        this.format = format;
     }
 
     @Override
     public void executeCommand() throws IOException, InvalidDataException {
-        repo.save(fileName);
+        repo.save(fileName, format);
     }
 }

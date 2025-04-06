@@ -19,23 +19,25 @@ public class Formating {
                 + "Binary\n"
                 + "Text\n");
         format = sc.nextLine();
+        format = format.toLowerCase();
 
         try {
             switch (format) {
-                case "JSON": {
+                case "json": {
+                    String command2 = "";
                     System.out.println("Selected format: JSON\n");
                     System.out.println("Select command: \n" +
                             "1. save\n" +
                             "2. load\n");
-                    String command2 = null;
                     System.out.println("Enter command: ");
                     command2 = sc.nextLine();
+                    command2 = command2.toLowerCase();
                     switch (command2) {
                         case "save": {
                             System.out.println("Enter picture name: ");
                             String fileName = sc.nextLine();
 
-                            Saver jsonSave = new Saver(fileName, repo);
+                            Saver jsonSave = new Saver(fileName, repo, format);
                             jsonSave.executeCommand();
                             break;
                         }
@@ -43,27 +45,28 @@ public class Formating {
                             System.out.println("Enter picture name: ");
                             String fileName = sc.nextLine();
 
-                            Loader jsonLoad = new Loader(fileName, repo);
+                            Loader jsonLoad = new Loader(fileName, repo, format);
                             jsonLoad.executeCommand();
                             break;
                         }
                     }
                     break;
                 }
-                case "Binary": {
-                    System.out.println("Selected format: JSON\n");
+                case "binary": {
+                    String command2 = "";
+                    System.out.println("Selected format: Binary\n");
                     System.out.println("Select command: \n" +
                             "1. save\n" +
                             "2. load\n");
-                    String command2 = null;
                     System.out.println("Enter command: ");
                     command2 = sc.nextLine();
+                    command2 = command2.toLowerCase();
                     switch (command2) {
                         case "save": {
                             System.out.println("Enter picture name: ");
                             String fileName = sc.nextLine();
 
-                            Saver binarySave = new Saver(fileName, repo);
+                            Saver binarySave = new Saver(fileName, repo, format);
                             binarySave.executeCommand();
                             break;
                         }
@@ -71,27 +74,28 @@ public class Formating {
                             System.out.println("Enter picture name: ");
                             String fileName = sc.nextLine();
 
-                            Loader binaryLoad = new Loader(fileName, repo);
+                            Loader binaryLoad = new Loader(fileName, repo, format);
                             binaryLoad.executeCommand();
                             break;
                         }
                     }
                     break;
                 }
-                case "Text": {
-                    System.out.println("Selected format: JSON\n");
+                case "text": {
+                    String command2 = "";
+                    System.out.println("Selected format: Text\n");
                     System.out.println("Select command: \n" +
                             "1. save\n" +
                             "2. load\n");
-                    String command2 = null;
                     System.out.println("Enter command: ");
                     command2 = sc.nextLine();
+                    command2 = command2.toLowerCase();
                     switch (command2) {
                         case "save": {
                             System.out.println("Enter picture name: ");
                             String fileName = sc.nextLine();
 
-                            Saver textSave = new Saver(fileName, repo);
+                            Saver textSave = new Saver(fileName, repo, format);
                             textSave.executeCommand();
                             break;
                         }
@@ -99,7 +103,7 @@ public class Formating {
                             System.out.println("Enter picture name: ");
                             String fileName = sc.nextLine();
 
-                            Loader textLoad = new Loader(fileName, repo);
+                            Loader textLoad = new Loader(fileName, repo, format);
                             textLoad.executeCommand();
                             break;
                         }
