@@ -12,3 +12,12 @@ public class Main {
         });
     }
 }
+
+/*
+* Serializarea obiectelor
+- transformarea unui obiect într-un flux de byte
+- acest flux poate fi apoi salvat intr-un fisier si folosit pentru a restaura obiectul mai tarziu
+*
+
+
+* */
