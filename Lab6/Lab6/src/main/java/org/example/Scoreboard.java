@@ -8,18 +8,29 @@ public class Scoreboard extends JPanel {
     private JLabel blueScoreLabel;
 
     public Scoreboard() {
-        setLayout(new GridLayout(2,1)); // 2 rows, 1 column
+        setLayout(new GridLayout(4,1));
+        setBorder(BorderFactory.createEmptyBorder(20,20,20,10));
+
+        Font scoreFont = new Font("Arial", Font.BOLD, 16);
+        JLabel scoreLabel = new JLabel("Scoreboard");
+
+        scoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(scoreLabel);
 
         redScoreLabel = new JLabel("Red Score: 0.00");
         redScoreLabel.setForeground(Color.RED);
-        redScoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        redScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        redScoreLabel.setFont(scoreFont);
+        add(redScoreLabel);
 
         blueScoreLabel = new JLabel("Blue Score: 0.00");
         blueScoreLabel.setForeground(Color.BLUE);
-        blueScoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        add(redScoreLabel);
+        blueScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        blueScoreLabel.setFont(scoreFont);
         add(blueScoreLabel);
+
+        add(new JLabel(""));
     }
 
     public void updateRedScore(double redScore) {
@@ -29,6 +40,4 @@ public class Scoreboard extends JPanel {
     public void updateBlueScore(double blueScore) {
         blueScoreLabel.setText(String.format("Blue Score: %.2f", blueScore));
     }
-
-
 }

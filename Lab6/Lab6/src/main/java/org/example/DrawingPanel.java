@@ -16,27 +16,24 @@ public class DrawingPanel extends JPanel {
     private final int canvasWidth = 800;
     private final int canvasHeight = 650;
     private final int dotRadius = 6;
-
-
     private final GameLogic gameLogic = new GameLogic();
+    private final GameSound gameSound = new GameSound();
 
     // Lista cu punctele de pe canva
     private List<Point> dotsLocations = new ArrayList<>();
     // Lista cu liniile desenate (Pentru retained mode)
     private List<Line> lines = new ArrayList<>();
 
-
     // Punctul curent selectat (Ptr click a doua puncte sau drag la linie
     private Point currentDot = null; // Ptr interactiuni mouse
     private int currentPlayer = 0; //Folosim 0 ptr rosu, 1 pentru albastru
+
+    private boolean isGameOver = false;
 
     // Double buffering: Folosit pentru a imbunatati cum este realizat desenatul
     // Adica: Desenul intai este realizat in memorie, apoi apare linia desenata, atunci cand se reface render la canva
     private BufferedImage offscreen;
     private Graphics2D offscreenGraphics;
-
-
-    private List<Point> dots = new ArrayList<>();
 
     private GraphForGame analyzer = new GraphForGame(dotsLocations, lines); // Graf de verificare daca e gata jocul
 
@@ -47,7 +44,6 @@ public class DrawingPanel extends JPanel {
         initMouseListeners(); // Initializare functionabilitate mouse
         dotsLocations = new ArrayList<>();
     }
-
 
     // Creaza imaginea in memorie si o umple cu alb
     private void createOffscreenImage() {
@@ -65,6 +61,9 @@ public class DrawingPanel extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e){
+                if(isGameOver){
+                    return;
+                }
 
                 // Luam pct pe care s-a dat click
                 Point clickedPoint = getDotAt(e.getX(), e.getY());
@@ -81,6 +80,7 @@ public class DrawingPanel extends JPanel {
                         Color color = (currentPlayer == 0 ? Color.RED : Color.BLUE);
                         lines.add(new Line(currentDot, clickedPoint, color));
                         drawLine(currentDot, clickedPoint, color);
+                        gameSound.play("sounds/player_move.wav");
 
                         gameLogic.addLine(currentDot, clickedPoint, currentPlayer);
 
@@ -88,16 +88,32 @@ public class DrawingPanel extends JPanel {
                         frame.getScoreboard().updateBlueScore(gameLogic.getBlueScore());
 
                         analyzer.setLines(lines);
+
+                        if(frame.isSecondPlayerAI()){
+                            currentPlayer = 1;
+                            frame.getConfigPanel().updateCurrentPlayer(currentPlayer);
+                            currentDot = null;
+                            repaint();
+
+                            new javax.swing.Timer(400, evt -> {
+                                frame.getGameAI().playTurn();
+                                ((javax.swing.Timer) evt.getSource()).stop(); // oprim timerul după o singură execuție
+                            }).start();
+
+                        } else {
+                            currentPlayer = 1 - currentPlayer;
+                            frame.getConfigPanel().updateCurrentPlayer(currentPlayer);
+                            currentDot = null;
+                            repaint();
+                        }
+
                         if(analyzer.isConnected())
                         {
                             gameOver();
                         }
-
-                        currentPlayer = 1 - currentPlayer; // Switch la player (Daca el e pe 0, devine 1,
-                        // daca el e pe 1, devine 0)
                     }
-                    currentDot = null; // Resetam selectia
-                    repaint(); // Reafisam canva
+                        currentDot = null; // Resetam selectia
+                        repaint(); // Reafisam canva
                     }
                 }
             }
@@ -105,14 +121,18 @@ public class DrawingPanel extends JPanel {
     }
 
     private void gameOver() {
+        isGameOver = true;
+
         double redScore = gameLogic.getRedScore();
         double blueScore = gameLogic.getBlueScore();
 
         String result;
         if(redScore > blueScore){
             result = "Blue wins!";
+            gameSound.play("sounds/victory_blue.wav");
         } else if(blueScore > redScore) {
             result = "Red wins!";
+            gameSound.play("sounds/victory_red.wav");
         } else {
             result = "Draw!";
         }
@@ -155,7 +175,6 @@ public class DrawingPanel extends JPanel {
     // Distance este o metoda din Point2D care returneaza distanta dintre
     // un punct speficicat de tip Point2D si cele doua coordonate date
 
-
     /**
      * Primeste lista de puncte si le deseneaza
      */
@@ -164,6 +183,7 @@ public class DrawingPanel extends JPanel {
         this.lines.clear(); // Stergem liniile vechi
         this.currentDot = null;// Resetam pct selectat
         this.currentPlayer = 0;
+        isGameOver = false;
 
         createOffscreenImage(); // Cream o noua imagine in memorie
         drawAll();
@@ -196,15 +216,12 @@ public class DrawingPanel extends JPanel {
         offscreenGraphics.setStroke(new BasicStroke(4)); // Cat de groasa este linia dintre puncte
         offscreenGraphics.drawLine(currentDot.x, currentDot.y, clickedPoint.x, clickedPoint.y);
 
-        //Calculam logica bazata pe linie
-        int currentPlayerColor = (color == Color.RED) ? 0 : 1;
-        gameLogic.addLine(currentDot, clickedPoint, currentPlayerColor);
-
         frame.getScoreboard().updateRedScore(gameLogic.getRedScore());
         frame.getScoreboard().updateBlueScore(gameLogic.getBlueScore());
     }
 
     public void resetGame() {
+        isGameOver = false;
         gameLogic.reset();
         frame.getScoreboard().updateRedScore(gameLogic.getRedScore());
         frame.getScoreboard().updateBlueScore(gameLogic.getBlueScore());
@@ -233,12 +250,9 @@ public class DrawingPanel extends JPanel {
         repaint();
     }
 
-
     public List<Line> getLines() {
         return lines;
     }
-
-
 
     //Afisam imaginea din memorie pe ecran
     @Override
@@ -247,5 +261,36 @@ public class DrawingPanel extends JPanel {
         graphics.drawImage(offscreen, 0, 0, this);
     }
 
+    public void drawLineAI(Point start, Point end) {
+        Color color = Color.BLUE;
+        lines.add(new Line(start, end, color));
+        drawLine(start, end, color);
+        gameSound.play("sounds/ai_move.wav");
 
+        gameLogic.addLine(start, end, 1); // AI este mereu blue = player 1
+        frame.getScoreboard().updateBlueScore(gameLogic.getBlueScore());
+
+        if(analyzer.isConnected()){
+            gameOver();
+        }
+
+        repaint();
+        currentPlayer = 0;
+        frame.getConfigPanel().updateCurrentPlayer(currentPlayer);
+    }
+
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(int currentPlayer) {
+        this.currentPlayer = currentPlayer;
+        if((currentPlayer == 1) && (frame.isSecondPlayerAI()) && (frame.getGameAI() != null)) {
+            frame.getGameAI().playTurn();
+        }
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
 }

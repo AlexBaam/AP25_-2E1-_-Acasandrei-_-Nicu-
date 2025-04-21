@@ -2,6 +2,7 @@ package org.example;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 import static java.lang.Math.sqrt;
 
@@ -32,5 +33,20 @@ public class Line implements Serializable {
 
     public Color getColor() {
         return color;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Line line)) return false;
+
+        return (Objects.equals(start, line.start) && Objects.equals(end, line.end)) ||
+                (Objects.equals(start, line.end) && Objects.equals(end, line.start));
+    }
+
+    @Override
+    public int hashCode() {
+        // Order doesn't matter: sum is commutative
+        return Objects.hash(start) + Objects.hash(end);
     }
 }

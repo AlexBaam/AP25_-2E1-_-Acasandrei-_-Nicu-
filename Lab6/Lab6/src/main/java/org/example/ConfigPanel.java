@@ -9,15 +9,13 @@ import java.util.List;
 
 public class ConfigPanel extends JPanel {
     private final MainFrame frame;
-    JLabel label;
-    JSpinner spinner; // Numarul de puncte ce vor fi selectate (Spinner este butonul cu up/down la modificarea valorii din el)
-    JButton button; // Generate dots button
-
-
+    JButton newGameButton; // New game button
     DrawingPanel canvas;
+    JLabel currentTurnLabel;
 
     private List<Point> dots  = new ArrayList<>(); // Lista cu punctele ce vor fi generate
     private Random random = new Random();
+    private GameSound gameSound = new GameSound();
 
     public ConfigPanel(MainFrame frame, DrawingPanel canvas) {
         this.frame = frame;
@@ -26,31 +24,38 @@ public class ConfigPanel extends JPanel {
     }
 
     private void init() {
-        //Number of dots button:
-        label = new JLabel("Number of dots:"); // Text de langa spinner
-        spinner = new JSpinner(new SpinnerNumberModel(20, 10, 30, 1));
-
-        add(label); //JPanel uses FlowLayout by default
-        add(spinner);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         //New game button:
-        button = new JButton("Generate Dots");
-        add(button);
+        newGameButton = new JButton("New Game");
+        newGameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        newGameButton.addActionListener(e -> new NewGame(frame, canvas)); // Adaugarea unei actiuni pentru buton
+        add(newGameButton);
 
-        button.addActionListener(this::generateDots); // Adaugarea unei actiuni pentru buton
+        //Player turn label:
+        currentTurnLabel = new JLabel("Current Turn: Red");
+        currentTurnLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        currentTurnLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        add(Box.createRigidArea(new Dimension(0, 5)));
+        add(currentTurnLabel);
+
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
-    private void generateDots(ActionEvent e) {
-        dots.clear(); // Stergem vechea lista de puncte
-        dotsLocation(); // Generam locatii random ptr puncte
-        canvas.fillWithDots(dots); // Generam puncte
-        canvas.resetGame(); // Reset the scores
+    public void generateNewGame(int dotCount, boolean isAI, int difficulty) {
+        dots.clear();
+        dotsLocation(dotCount);
+        canvas.fillWithDots(dots);
+        canvas.resetGame();
+        frame.setupForAI(isAI, difficulty);
+        gameSound.play("sounds/reset.wav");
     }
 
-    private void dotsLocation() {
-        int x = 0, y = 0;
+    private void dotsLocation(int dotCount) {
+        int x = 0;
+        int y = 0;
 
-        int dotsNumber = (int) spinner.getValue();// obtinem nr de puncte din spinner
+        int dotsNumber = dotCount;// obtinem nr de puncte din spinner
         for(int i = 0; i < dotsNumber; i++) {
             boolean cantBeAdded = true; // Verificare sa nu se suprapuna exact (dar ele tot se pot suprapune pe margini
             // Fiindca eu verific pixel cu pixel ca ele nu se suprapun, nu pe o anumita raza
@@ -70,6 +75,10 @@ public class ConfigPanel extends JPanel {
             }
             dots.add(new Point(x,y));
         }
+    }
+
+    public void updateCurrentPlayer(int currentPlayer) {
+        currentTurnLabel.setText("Current turn: " + (currentPlayer == 0 ? "Red" : "Blue"));
     }
 
 }

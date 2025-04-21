@@ -1,13 +1,13 @@
 //Exit, Export, Save, Load
 
 package org.example;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 
+import java.util.ArrayList;
 import java.util.List; // Corect pentru a folosi List din java.util
 import java.awt.Point; // Pentru clasa Point din AWT
 
@@ -19,24 +19,62 @@ public class ControlPanel extends JPanel {
     JButton loadButton = new JButton("Load");
     JButton exportButton = new JButton("Export");
 
+    JButton settingsButton = new JButton("Settings");
+    JButton historyButton = new JButton("History");
+
+    private final GameSound gameSound = new GameSound();
+
     public ControlPanel(MainFrame frame) {
         this.frame = frame;
         init();
     }
 
     private void init(){
-        //change the default layout manager (just for fun)
-        setLayout(new GridLayout(1, 4));
-        add(loadButton);
-        add(saveButton);
-        add(exportButton);
-        add(exitButton);
+        setLayout(new GridLayout(1, 2));
+        add(historyButton);
+        add(settingsButton);
+
+        //Action listener pentru history
+        historyButton.addActionListener(e -> {
+            List<String> history = frame.getDrawingPanel().getGameLogic().getHistory();
+            new GameHistory(frame, history);
+        });
+
+        //Action listener pentru settings (aici vom gasi export, save, load si exit)
+        settingsButton.addActionListener(e-> openSettingsWindow());
+    }
+
+    private void openSettingsWindow() {
+        JDialog settingsDialog = new JDialog(frame, "Settings", true);
+        settingsDialog.setLayout(new GridLayout(2,2,10,10));
+        settingsDialog.setSize(300,150);
+
+        for (ActionListener al : loadButton.getActionListeners()){
+            loadButton.removeActionListener(al);
+        }
+        for (ActionListener al : saveButton.getActionListeners()){
+            saveButton.removeActionListener(al);
+        }
+        for (ActionListener al : exportButton.getActionListeners()){
+            exportButton.removeActionListener(al);
+        }
+        for (ActionListener al : exitButton.getActionListeners()){
+            exitButton.removeActionListener(al);
+        }
+
+        settingsDialog.add(loadButton);
+        settingsDialog.add(saveButton);
+        settingsDialog.add(exportButton);
+        settingsDialog.add(exitButton);
 
         //configure listeners for all buttons
         exitButton.addActionListener(this::exitGame); // Actiune buton
         exportButton.addActionListener(this::exportImage);
         saveButton.addActionListener(this::saveGame);
         loadButton.addActionListener(this::loadGame);
+
+        settingsDialog.setLocationRelativeTo(frame);
+        settingsDialog.setVisible(true);
     }
 
     // Ce face butonul
@@ -70,12 +108,25 @@ public class ControlPanel extends JPanel {
             out.writeObject(drawingPanel.getDotsLocations());
 
             // salvam liniile + culoare
-            out.writeObject(drawingPanel.getLines());
+            List<Line> redLines = drawingPanel.getGameLogic().getRedLines();
+            List<Line> blueLines = drawingPanel.getGameLogic().getBlueLines();
+            out.writeObject(redLines);
+            out.writeObject(blueLines);
 
-            // salvam scorurile + logica jocului
-            out.writeObject(frame.getScoreboard());
-            out.writeObject(drawingPanel.getGameLogic());
+            // salvam scorurile jucatorilor
+            out.writeDouble(frame.getDrawingPanel().getGameLogic().getRedScore());
+            out.writeDouble(frame.getDrawingPanel().getGameLogic().getBlueScore());
 
+            // salvam tipul de jucator cu care jucam
+            out.writeBoolean(frame.isSecondPlayerAI());
+
+            // salvam dificultatea AI-ului
+            out.writeInt(frame.getAiDifficulty());
+
+            // salvam ce player urmeaza
+            out.writeInt(drawingPanel.getCurrentPlayer());
+
+            gameSound.play("sounds/save_load.wav");
             JOptionPane.showMessageDialog(frame, "Game saved successfully!", "Save", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(frame, "Error while saving game: " + ex.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE);
@@ -91,28 +142,54 @@ public class ControlPanel extends JPanel {
             List<Point> loadedDots = (List<Point>) in.readObject();
 
             // incarcam liniile si culorile acestora
-            List<Line> loadedLines = (List<Line>) in.readObject();
+            List<Line> loadedRedLines = (List<Line>) in.readObject();
+            List<Line> loadedBlueLines = (List<Line>) in.readObject();
+            List<Line> allLines = new ArrayList<>();
+            allLines.addAll(loadedRedLines);
+            allLines.addAll(loadedBlueLines);
 
-            // incarcam scorurile si logica jocului
-            Scoreboard loadedScoreboard = (Scoreboard) in.readObject();
-            GameLogic loadedGameLogic = (GameLogic) in.readObject();
+
+            // incarcam scorurile jucatorilor
+            double redScore = in.readDouble();
+            double blueScore = in.readDouble();
+
+            // incarcam detaliile despre AI
+            boolean isAI = in.readBoolean();
+            int difficulty = in.readInt();
+            int currentPlayer = in.readInt();
 
             // actualizam DrawingPanel cu punctele si liniile incarcate
             drawingPanel.fillWithDots(loadedDots);
 
             // adauga liniile in DrawingPanel
-            drawingPanel.setLines(loadedLines);  /// ne asiguram ca liniile sunt incarcate !!
+            drawingPanel.setLines(allLines);  /// ne asiguram ca liniile sunt incarcate !!
 
-            // actualizeaza scorurile
-            scoreboard.updateRedScore(loadedGameLogic.getRedScore());
-            scoreboard.updateBlueScore(loadedGameLogic.getBlueScore());
+            GameLogic gameLogic = drawingPanel.getGameLogic();
+            gameLogic.reset();
+            for(Line line : loadedRedLines) {
+                gameLogic.addLine(line.getStart(), line.getEnd(), 0); // RED
+            }
+            for(Line line : loadedBlueLines) {
+                gameLogic.addLine(line.getStart(), line.getEnd(), 1); // BLUE
+            }
 
+            // actualizam scorurile jucatorilor
+            scoreboard.updateRedScore(redScore);
+            scoreboard.updateBlueScore(blueScore);
+
+            // setam AI
+            frame.setSecondPlayerAI(isAI);
+            frame.setAiDifficulty(difficulty);
+            if(isAI){
+                frame.setGameAI(new GameAI(difficulty, drawingPanel));
+            }
+
+            drawingPanel.setCurrentPlayer(currentPlayer);
+
+            gameSound.play("sounds/save_load.wav");
             JOptionPane.showMessageDialog(frame, "Game loaded successfully!", "Load", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(frame, "Error while loading game: " + ex.getMessage(), "Load Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
-
 }

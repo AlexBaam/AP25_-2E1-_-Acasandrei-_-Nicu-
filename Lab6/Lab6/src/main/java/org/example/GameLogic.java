@@ -24,12 +24,10 @@
 
 package org.example;
 
-
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import static java.lang.Math.sqrt;
 
 
@@ -39,16 +37,20 @@ public class GameLogic implements Serializable {
 
     private List<Line> redLines = new ArrayList<>();
     private List<Line> blueLines = new ArrayList<>();
+    private List<String> history = new ArrayList<>();
 
     public GameLogic() {
         redScore = 0;
         blueScore = 0;
-    } // Default empty constructor
+    } // Default constructor
 
     // Ptr fiecare player adaugam linia in lista de linii de culoarea lor si calculam scorul;
     public void addLine(Point start, Point end, int currentPlayer) {
         double lineLength = computeDistance(start, end);
         Line line = new Line(start, end, currentPlayer == 0 ? Color.RED : Color.BLUE);
+
+        String move = (currentPlayer == 0 ? "R" : "B") + ": +" + String.format("%.2f", lineLength);
+        history.add(move);
 
         if(currentPlayer == 0){
             redScore += lineLength;
@@ -60,8 +62,7 @@ public class GameLogic implements Serializable {
     }
 
     private double computeDistance(Point start, Point end) {
-        double length = sqrt((end.x - start.x)*(end.x - start.x) + (end.y - start.y)*(end.y - start.y)); // Distanta euclidiana
-        return length;
+        return Math.sqrt((end.x - start.x)*(end.x - start.x) + (end.y - start.y)*(end.y - start.y)); // Distanta euclidiana
     }
 
     public double getRedScore() {
@@ -72,12 +73,8 @@ public class GameLogic implements Serializable {
         return blueScore;
     }
 
-    public List<Line> getRedLines() {
-        return redLines;
-    }
-
-    public List<Line> getBlueLines() {
-        return blueLines;
+    public List<String> getHistory() {
+        return history;
     }
 
     public void reset() {
@@ -85,20 +82,15 @@ public class GameLogic implements Serializable {
         blueScore = 0;
         redLines.clear();
         blueLines.clear();
+        history.clear();
     }
 
-    // salveaza datele despre joc intr-un fisier
-    public void saveGame(String filename) throws IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
-            out.writeObject(this);
-        }
+    public List<Line> getRedLines() {
+        return redLines;
     }
 
-    // Ia fisierul si reface jocul
-    public static GameLogic loadGame(String filename) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
-            return (GameLogic) in.readObject();
-        }
+    public List<Line> getBlueLines() {
+        return blueLines;
     }
 }
 
