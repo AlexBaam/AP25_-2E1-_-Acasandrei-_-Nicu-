@@ -8,11 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class ContinentDAO {
-    public void create(String name) throws SQLException {
-        Connection con = Database.getConnection();
-
+    public void create(Connection con, String name) throws SQLException {
         // First check if the continent already exists
-        if (findByName(name) == null) {
+        if (findByName(con, name) == null) {
             try (PreparedStatement pstmt = con.prepareStatement(
                     "INSERT INTO continents (name) VALUES (?)")) {
                 pstmt.setString(1, name);
@@ -24,9 +22,7 @@ public class ContinentDAO {
 
     }
 
-    public Integer findByName(String name) throws SQLException {
-        Connection con = Database.getConnection();
-
+    public Integer findByName(Connection con, String name) throws SQLException {
         Integer var5;
         try (
                 Statement stmt = con.createStatement();

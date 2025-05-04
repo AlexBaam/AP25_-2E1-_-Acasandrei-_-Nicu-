@@ -13,6 +13,7 @@ public class Database {
     private static final String URL = "jdbc:postgresql://localhost:5432/Cities";
     private static final String USER = "postgres";
     private static final String PASSWORD = "Alex0307";
+
     private static Connection connection = null;
 
     private Database() {
@@ -32,17 +33,6 @@ public class Database {
             connection.setAutoCommit(false);
         } catch (SQLException e) {
             System.err.println(e);
-        }
-
-    }
-
-    public static void closeConnection() {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                System.err.println("Error closing connection: " + e.getMessage());
-            }
         }
 
     }
