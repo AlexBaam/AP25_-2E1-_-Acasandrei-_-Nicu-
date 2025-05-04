@@ -28,7 +28,7 @@ public class Database {
 
     private static void createConnection() {
         try {
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Cities", "postgres", "Alex0307");
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
             connection.setAutoCommit(false);
         } catch (SQLException e) {
             System.err.println(e);
