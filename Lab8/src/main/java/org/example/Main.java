@@ -12,6 +12,9 @@ public class Main {
             ContinentDAO continents = new ContinentDAO();
             CountryDAO countries = new CountryDAO();
             CityDAO cities = new CityDAO();
+            CityGenerator cityGenerator = new CityGenerator();
+            SisterCitiesDAO sisterCities = new SisterCitiesDAO();
+            SisterCityGenerator sisterCityGenerator = new SisterCityGenerator();
 
             continents.create(con,"Europe");
             continents.create(con,"Asia");
@@ -21,47 +24,57 @@ public class Main {
             int asiaId = continents.findByName(con,"Asia");
 
             countries.create(con, "Romania", "RO", europeId);
-            countries.create(con,"Ukraine", "UA", europeId);
             countries.create(con,"Germany", "DE", europeId);
             countries.create(con,"France", "FR", europeId);
-            countries.create(con,"Italy", "IT", europeId);
 
             countries.create(con,"Japan", "JP", asiaId);
-            countries.create(con,"China", "CN", asiaId);
 
             int romaniaID = countries.findByName(con,"Romania");
 
-            // Importa orașele din fișierul CSV
             CityImporter importer = new CityImporter();
             importer.importFromCSV(con);
+            System.out.println();
 
-            System.out.println("European contries: \n");
+            System.out.println("European contries: ");
             countries.findByContinent(con, europeId);
             System.out.println();
 
-            System.out.println("Asian contries: \n");
-            countries.findByContinent(con, asiaId);
-            System.out.println();
-
-            System.out.println("Romanian cities: \n");
+            System.out.println("Romanian cities: ");
             cities.findByCountry(con, romaniaID);
             System.out.println();
 
-            System.out.println("All cities: \n");
+            System.out.println("All cities: ");
             cities.findAll(con);
             System.out.println();
 
-            con.commit();
-
-            List<City> allCities = cities.getAll(con);
-            DistanceComputer distanceComputer = new DistanceComputer(allCities);
-
-            for(City city : allCities) {
-                System.out.println(city);
-            }
+            List<City> realCities = cities.getAll(con);
+            DistanceComputer distanceComputer = new DistanceComputer(realCities);
+            System.out.println("Distance between cities: ");
+            distanceComputer.computeAll();
             System.out.println();
 
-            distanceComputer.computeAll();
+            List<Integer> countryIds = countries.getAllCountryIds(con);
+            List<City> fakeCities = cityGenerator.generator(con, 10000, countryIds);
+
+            System.out.println("Generated cities: " + fakeCities.size());
+            for (int i = 0; i < 10 && i < fakeCities.size(); i++) {
+                System.out.println(fakeCities.get(i));
+            }
+
+            sisterCityGenerator.generateRandomSisters(fakeCities, 0.0001, con);
+
+            SisterCityGraph citiesGraph = new SisterCityGraph(fakeCities, con);
+            System.out.println("Graph contains " +
+                    citiesGraph.getGraph().vertexSet().size() + " cities and " +
+                    citiesGraph.getGraph().edgeSet().size() + " sister relationships.");
+
+            ImageGenerator imgGen = new ImageGenerator(fakeCities, citiesGraph.getGraph(), 1200, 600);
+            imgGen.drawToFile("graph.png");
+
+            sisterCities.deleteAll(con);
+            cities.deleteAll(con);
+            countries.deleteAll(con);
+            con.commit();
         } catch (SQLException e) {
             System.err.println("SQL Error: " + e.getMessage());
             // Optional: rollback using direct connection or a utility

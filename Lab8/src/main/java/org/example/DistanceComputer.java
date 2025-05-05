@@ -14,9 +14,11 @@ public class DistanceComputer {
     }
 
     public void computeAll(){
-        for(City city1 : allCities){
-            for(City city2 : allCities){
-                if(!city1.equals(city2)){
+        for (int i = 0; i < allCities.size(); i++) {
+            for (int j = i + 1; j < allCities.size(); j++) {
+                City city1 = allCities.get(i);
+                City city2 = allCities.get(j);
+
                     long1 = Math.toRadians(city1.getLongitude());
                     long2 = Math.toRadians(city2.getLongitude());
                     lat1 = Math.toRadians(city1.getLatitude());
@@ -38,8 +40,9 @@ public class DistanceComputer {
                     // calculate the result
                     double finalResult = c * r;
 
-                    System.out.println("Distance between: " + city1.getName() + " and " + city2.getName() + " is " + finalResult +" km.");
-                }
+
+                System.out.printf("Distance between %s and %s: %.2f km%n",
+                        city1.getName(), city2.getName(), finalResult);
             }
         }
     }

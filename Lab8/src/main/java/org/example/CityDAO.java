@@ -9,7 +9,6 @@ import java.util.*;
 public class CityDAO {
     public void create(Connection con, String name, int countryId, boolean capital, double lat, double lon) {
         if (findByName(con, name, countryId) != null) {
-            System.out.println("City " + name + " already exists in the country! Skipping insert!");
             return;
         }
 
@@ -26,7 +25,6 @@ public class CityDAO {
             pstmt.setDouble(4, lat);
             pstmt.setDouble(5, lon);
             pstmt.executeUpdate();
-            System.out.println("Inserted city: " + name);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -44,7 +42,7 @@ public class CityDAO {
         }
     }
 
-    private Integer findByName(Connection con, String name, int countryId) {
+    public Integer findByName(Connection con, String name, int countryId) {
         try (PreparedStatement pstmt = con.prepareStatement(
                 "SELECT id FROM cities WHERE name = ? AND country = ?")) {
             pstmt.setString(1, name);
@@ -116,5 +114,15 @@ public class CityDAO {
             throw new RuntimeException(e);
         }
         return cities;
+    }
+
+    public void deleteAll(Connection con) {
+        try (PreparedStatement stmt = con.prepareStatement(
+                "DELETE FROM cities")) {
+            stmt.executeUpdate();
+            System.out.println("All cities deleted.");
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting cities: " + e.getMessage());
+        }
     }
 }

@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.*;
 
 public class CountryDAO {
     public void create(Connection con,String name, String code, int continentId) throws SQLException {
@@ -63,4 +64,29 @@ public class CountryDAO {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Integer> getAllCountryIds(Connection con) {
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = con.prepareStatement("SELECT id FROM countries");
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                ids.add(rs.getInt("id"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to retrieve country IDs: " + e.getMessage());
+        }
+
+        return ids;
+    }
+
+    public void deleteAll(Connection con) {
+        try (PreparedStatement stmt = con.prepareStatement("DELETE FROM countries")) {
+            stmt.executeUpdate();
+            System.out.println("All countries deleted.");
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting countries: " + e.getMessage());
+        }
+    }
+
 }
