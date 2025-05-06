@@ -1,0 +1,29 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             version="2.0">
+
+    <!-- aici definim unitatea de persistenta -->
+    <persistence-unit name="WorldCitiesPU">
+
+        <properties>
+            <!-- setarile pentru conectarea la baza de date PostgreSQL -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/Cities2"/>
+            <!-- numele utilizator -->
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <!-- parola utilizator -->
+            <property name="javax.persistence.jdbc.password" value="Alex0307"/>
+            <!-- driverul JDBC pt PostgreSQL -->
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+
+            <!-- Hibernate -->
+
+            <!-- dialectul specific PostgreSQL (ca sa stie cum sa scrie SQL-ul corect pentru acest tip de baza de date) -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+
+            <!-- setare care zice ce sa faca Hibernate la pornire (none = nu modifica tabelele) -->
+            <property name="hibernate.hbm2ddl.auto" value="none"/>
+
+            <!-- afiseaza interogarile SQL in consola (ajuta la sdebug) -->
+            <property name="hibernate.show_sql" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
