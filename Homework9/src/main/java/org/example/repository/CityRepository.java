@@ -1,6 +1,7 @@
-package org.example;
+package org.example.repository;
+import org.example.entities.City;
+
 import javax.persistence.EntityManager;
-import java.util.List;
 
 public class CityRepository extends AbstractRepository<City> {
 

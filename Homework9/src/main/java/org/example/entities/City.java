@@ -1,4 +1,4 @@
-package org.example;
+package org.example.entities;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class City {
     private List<City> cities = new ArrayList<>();
 
     // constructor gol – este obligatoriu pentru ca JPA sa poata crea obiectul
-    public City() {}
+    public City(int id, String name, int country, boolean capital, double latitude, double longitude) {}
 
     public City(String name, Country country) {
         this.name = name;

@@ -1,5 +1,12 @@
 package org.example;
 
+import org.example.entities.City;
+import org.example.entities.Continent;
+import org.example.entities.Country;
+import org.example.repository.CityRepository;
+import org.example.repository.ContinentRepository;
+import org.example.repository.CountryRepository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 

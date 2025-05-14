@@ -1,4 +1,4 @@
-package org.example;
+package org.example.repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -78,8 +78,8 @@ public abstract class AbstractRepository<T> {
         long start = System.nanoTime();
         try{
             List<T> results = entityManager. createQuery(
-                    "select e from " + clazz.getSimpleName() + " e WHERE e." + fieldName + " LIKE :name", clazz
-            ).setParameter("name", "%" + name + "%")
+                    "select e from " + clazz.getSimpleName() + " e WHERE e." + fieldName + " LIKE :name", clazz)
+                    .setParameter("name", "%" + name + "%")
                     .getResultList();
 
             long end = System.nanoTime();

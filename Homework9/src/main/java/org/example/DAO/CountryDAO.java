@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package org.example;
+package org.example.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

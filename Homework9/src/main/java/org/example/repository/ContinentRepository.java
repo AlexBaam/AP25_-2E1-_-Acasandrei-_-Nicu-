@@ -1,4 +1,6 @@
-package org.example;
+package org.example.repository;
+
+import org.example.entities.Continent;
 
 import javax.persistence.EntityManager;
 import java.util.List;
