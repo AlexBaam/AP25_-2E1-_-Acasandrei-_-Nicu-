@@ -22,7 +22,7 @@ public class SisterCitiesDAO {
         int max = Math.max(city1Id, city2Id);
 
         try (PreparedStatement pstmt = con.prepareStatement(
-                "INSERT INTO sister_cities (city1_id, city2_id) VALUES (?, ?) ON CONFLICT DO NOTHING")) {
+                "INSERT INTO sister_cities (city1_id, city2_id) VALUES (?, ?)")) {
             pstmt.setInt(1, min);
             pstmt.setInt(2, max);
             pstmt.executeUpdate();

@@ -1,5 +1,6 @@
 package org.example;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
@@ -24,6 +25,8 @@ public class GameClient {
              */
             System.out.println("Connected to server on port " + port);
 
+            HexBoardFrame boardFrame = new HexBoardFrame(11);
+
             keyboardReader = new Scanner(System.in);
             /*
             Ptr a citi de la tastatura folosim Scanner, l-am mai folosit anterior in Lab5, cand dadeam comenzi in terminal
@@ -41,11 +44,42 @@ public class GameClient {
 
             String userInput = "";
 
+            new Thread(() -> {
+                try {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        if (line.startsWith("ok")) {
+                            String[] parts = line.split(" ");
+                            int row = Integer.parseInt(parts[1]);
+                            int col = Integer.parseInt(parts[2]);
+                            String color = parts[3];
+                            SwingUtilities.invokeLater(() -> boardFrame.updateCell(row, col, color));
+                        }
+                        if (line.toLowerCase().contains("game over")) {
+                            String finalLine = line;
+                            SwingUtilities.invokeLater(() -> boardFrame.setGameOver("Game Over! " + finalLine));
+                        }
+                        if (!line.isEmpty()) {
+                            System.out.println("Server responseLine: " + line);
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Disconnected from server.");
+                }
+            }).start();
+
+            boolean gameOver = false;
+
             while(true){
+                if (gameOver) {
+                    System.out.println("The game is over. Please restart the client to play again.");
+                    break;
+                }
+
                 System.out.print("Command: ");
                 userInput = keyboardReader.nextLine().trim().toLowerCase();
 
-                if(userInput.equals("exit")){
+                if(userInput.toLowerCase().equals("exit")){
                     out.println(userInput);
                     break;
                 }
@@ -54,6 +88,9 @@ public class GameClient {
 
                 String responseLine;
                 while((responseLine = in.readLine()) != null){
+                    if(responseLine.toLowerCase().contains("over")){
+                        gameOver = true;
+                    }
                     if(responseLine.isEmpty()){
                         break;
                     }

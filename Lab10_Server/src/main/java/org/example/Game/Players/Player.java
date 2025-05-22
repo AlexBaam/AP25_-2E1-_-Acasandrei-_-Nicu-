@@ -1,4 +1,4 @@
-package org.example.Game;
+package org.example.Game.Players;
 
 import org.example.Game.GameTable.Cell;
 

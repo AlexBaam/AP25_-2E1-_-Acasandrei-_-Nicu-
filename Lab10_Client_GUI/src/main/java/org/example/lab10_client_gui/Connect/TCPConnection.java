@@ -1,4 +1,4 @@
-package org.example.lab10_client_gui;
+package org.example.lab10_client_gui.Connect;
 
 import javafx.application.Platform;
 

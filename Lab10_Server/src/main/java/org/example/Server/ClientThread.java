@@ -3,7 +3,7 @@ package org.example.Server;
 import org.example.Game.GameLogic.GameManager;
 import org.example.Game.GameLogic.PlayGame;
 import org.example.Game.GameTable.Cell;
-import org.example.Game.Player;
+import org.example.Game.Players.Player;
 
 import java.io.*;
 import java.net.Socket;
@@ -32,7 +32,7 @@ public class ClientThread extends Thread {
 
             debugOutput.info("New client connected on thread number: " + getThreadId(socket));
             out.println("Welcome to Hex Game!");
-            out.println("Use: create <name>, join <name> <id>, move <row> <collum>, exit");
+            out.println("Use: create <name>, join <name> <id>, move <row> <collum>, ai <name>, exit");
 
             String line = "";
             while ((line = in.readLine()) != null) {
@@ -56,7 +56,8 @@ public class ClientThread extends Thread {
                     String name = tokens[1];
                     player = new Player(name, socket, Cell.RED);
                     gameId = gameManager.createGame(player);
-                    out.println("Game created. ID: " + gameId);
+                    gameManager.getGame(gameId).setRedWriter(out);
+                    out.println("Game created as red by " + player.getName() + ". ID: " + gameId);
                     out.println();
                 } else if (line.startsWith("join")) {
                     String[] tokens = line.split(" ");
@@ -75,7 +76,10 @@ public class ClientThread extends Thread {
                     if (joined) {
                         this.player = blue;
                         this.gameId = id;
-                        out.println("Game joined as blue. Game id: " + gameId);
+                        PlayGame joinedGame = gameManager.getGame(gameId);
+                        joinedGame.setBluePlayer(blue);
+                        joinedGame.setBlueWriter(out);
+                        out.println("Game joined as blue by " + player.getName() + ". Game id: " + gameId);
                         out.println();
                     } else {
                         out.println("Could not join game. Invalid ID or already full");
@@ -96,12 +100,7 @@ public class ClientThread extends Thread {
                         boolean success = gameManager.submitMove(gameId, player, row, collum);
                         if (success) {
                             PlayGame game = gameManager.getGame(gameId);
-                            if (game.hasEnded()) {
-                                out.println("Game over! Winner: " + game.getWinner().getName());
-                            } else {
-                                out.println("Move accepted. It's now " + game.getCurrentTurn() + " turn.");
-                                out.println();
-                            }
+                            game.broadcastMove(row, collum, player.getColor());
                         } else {
                             out.println("Invalid move or not your turn");
                             out.println();
@@ -110,7 +109,24 @@ public class ClientThread extends Thread {
                         out.println("Invalid coordinates.");
                         out.println();
                     }
-                }    else {
+                } else if(line.startsWith("ai")) {
+                    String[] tokens = line.split(" ");
+                    if(tokens.length < 2) {
+                        out.println("Usage: ai <name>");
+                        out.println();
+                        continue;
+                    }
+
+                    String name = tokens[1];
+                    player = new Player(name, socket, Cell.RED);
+
+                    gameId = gameManager.createAIGame(player);
+                    gameManager.getGame(gameId).setRedWriter(out);
+                    out.println("Game created as red by " + player.getName() + ". ID: " + gameId);
+                    out.println("You are playing against AI!");
+                    out.println();
+
+                } else {
                     out.println("Unknown command: " + line);
                     out.println();
                 }
