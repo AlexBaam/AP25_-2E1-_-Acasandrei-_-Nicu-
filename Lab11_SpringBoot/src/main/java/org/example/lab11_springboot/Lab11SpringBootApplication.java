@@ -12,5 +12,3 @@ public class Lab11SpringBootApplication {
     }
 
 }
-
-// http://localhost:8081/api/cities
