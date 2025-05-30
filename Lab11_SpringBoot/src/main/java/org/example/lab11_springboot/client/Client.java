@@ -28,7 +28,7 @@ public class Client implements CommandLineRunner {
         restTemplate.put(baseUrl + "/" + created.getId(), created);
         System.out.println("Updated Iasi.");
 
-        restTemplate.delete(baseUrl + "/" + created.getId());
+      //  restTemplate.delete(baseUrl + "/" + created.getId());
         System.out.println("Deleted Iasi.");
     }
 }
