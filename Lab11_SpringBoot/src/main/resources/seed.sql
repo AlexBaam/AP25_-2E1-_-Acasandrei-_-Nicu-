@@ -1,8 +1,20 @@
+DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS borders;
 DROP TABLE IF EXISTS sister_cities;
 DROP TABLE IF EXISTS cities;
 DROP TABLE IF EXISTS countries;
 DROP TABLE IF EXISTS continents CASCADE;
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL
+);
+
+INSERT INTO users (username, password) VALUES
+    ('Alex', '0307'),
+    ('Nicu', '0307'),
+    ('Geo', '0404');
 
 CREATE TABLE continents (
     id SERIAL PRIMARY KEY,

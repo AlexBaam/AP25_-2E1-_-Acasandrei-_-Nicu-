@@ -36,4 +36,8 @@ public class City {
         this.longitude = longitude;
         this.isFake = isFake;
     }
+
+    public Object isCapital() {
+        return capital;
+    }
 }

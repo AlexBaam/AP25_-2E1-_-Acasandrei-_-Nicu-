@@ -12,3 +12,5 @@ public class Lab11SpringBootApplication {
     }
 
 }
+
+// SWAGGER: http://localhost:8081/swagger-ui/#/
