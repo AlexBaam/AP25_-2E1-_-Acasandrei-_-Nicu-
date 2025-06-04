@@ -7,26 +7,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.Enumeration;
 
 public class CustomClassLoader extends URLClassLoader {
 
+    // folosim ClassLoader de sistem ca parinte
     public CustomClassLoader(URL[] urls) {
         super(urls, ClassLoader.getSystemClassLoader());
     }
 
-    // Constructor adăugat pentru a permite crearea unui ClassLoader fără URL-uri inițiale
-    public CustomClassLoader() {
-        super(new URL[]{}, ClassLoader.getSystemClassLoader());
-    }
-
+    // incarca o clasa dintr-un array de bytes (continutul unui fisier .class)
     public Class<?> defineClassFromBytes(String name, byte[] b) {
         return defineClass(name, b, 0, b.length);
     }
 
-    // Această metodă nu va mai fi folosită direct în `main` deoarece compilarea se face separat
-    // Dar o păstrăm pentru coerență
+    // incarca o clasa dintr-un fisier .class
     public Class<?> findClassInFile(File file) throws ClassNotFoundException {
         try {
+            // construim numele complet
+            // ex: folder/folder2/nume_clasa.class -> folder.folder2.nume_clasa.class
             String className = file.getPath()
                     .replace(File.separatorChar, '.')
                     .replace(".class", "");
